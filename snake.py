@@ -7,34 +7,106 @@ pygame.init()
 max_width = 500
 max_height = 500
 
-width = 20
-height = 20
-speed = 20
 run = True
-
-snake_x = [0 for i in range(25*25)]
-snake_y = [0 for i in range(25*25)]
-
-
-snake_x[0] = 100
-snake_y[0] = 40
-snake_x[1] = 80
-snake_y[1] = 40
-snake_x[2] = 60
-snake_y[2] = 40
-snake_len = 3
-
-apple_x = 0
-apple_y = 0
-
-left = False
-right = True
-up = False
-down = False
-apple = False
 
 pygame.display.set_caption("Змейка")
 win = pygame.display.set_mode((max_width, max_height))
+
+class GameWindow:
+    def __init__(self):
+        self.max_width = 500
+        self.max_height = 500
+        self.step = 20
+
+
+class Objects:
+    def __init__(self):
+        self.snake_x = [0 for i in range(25 * 25)]
+        self.snake_y = [0 for i in range(25 * 25)]
+        self.snake_x[0] = 100
+        self.snake_y[0] = 40
+        self.snake_x[1] = 80
+        self.snake_y[1] = 40
+        self.snake_x[2] = 60
+        self.snake_y[2] = 40
+        self.snake_len = 3
+        self.height = 20
+        self.width = 20
+        self.apple = False
+        self.apple_x = 0
+        self.apple_y = 0
+        self.step = 20
+        self.goleft = False
+        self.goright = True
+        self.goup = False
+        self.godown = False
+
+    def stop(self):
+        self.goleft = False
+        self.goright = False
+        self.goup = False
+        self.godown = False
+
+    def its_ok(self):
+        result = True
+        for i in range(1, self.snake_len):
+            if self.snake_x[i] == self.snake_x[0] and self.snake_y[i] == self.snake_y[0]:
+                result = False
+        return result
+
+    def direction(self, direct):
+        if direct == "up":
+            self.goup = True
+        elif direct == "down":
+            self.godown = True
+        elif direct == "left":
+            self.goleft = True
+        elif direct == "right":
+            self.goright = True
+
+    def draw(self):
+        for i in range(self.snake_len):
+            x = self.snake_x[i]
+            y = self.snake_y[i]
+            pygame.draw.rect(win, (0, 0, 255), (x - 1, y - 1, self.width - 1, self.height - 1))
+        pygame.draw.rect(win, (255, 0, 0), (self.apple_x - 1, self.apple_y - 1, self.width - 1, self.height - 1))
+
+    def new_apple(self):
+        in_snake = False
+        self.apple_x = random.randint(0, 24) * 20
+        self.apple_y = random.randint(0, 24) * 20
+        for i in range(self.snake_len):
+            if self.apple_x == self.snake_x[i] and self.apple_y == self.snake_y[i]:
+                in_snake = True
+                break
+        if in_snake:
+            self.new_apple()
+        self.apple = True
+
+    def move(self):
+        if self.goright:
+            new_x = self.snake_x[0] + self.step
+            new_y = self.snake_y[0]
+        if self.goleft:
+            new_x = self.snake_x[0] - self.step
+            new_y = self.snake_y[0]
+        if self.goup:
+            new_x = self.snake_x[0]
+            new_y = self.snake_y[0] - self.step
+        if self.godown:
+            new_x = self.snake_x[0]
+            new_y = self.snake_y[0] + self.step
+        if new_x == self.apple_x and new_y == self.apple_y:
+            self.new_apple()
+            self.snake_len += 1
+        for i in reversed(range(self.snake_len)):
+            if i != 0:
+                self.snake_x[i] = self.snake_x[i - 1]
+                self.snake_y[i] = self.snake_y[i - 1]
+            else:
+                self.snake_x[0] = new_x
+                self.snake_y[0] = new_y
+        self.draw()
 
 
 def game_over():
@@ -44,102 +116,38 @@ def game_over():
     pygame.time.delay(1000)
 
 
-def draw_snake():
-    for i in range(snake_len):
-        x = snake_x[i]
-        y = snake_y[i]
-        pygame.draw.rect(win, (0, 0, 255), (x - 1, y - 1, width - 1, height - 1))
-    pygame.draw.rect(win, (255, 0, 0), (apple_x - 1, apple_y - 1, width - 1, height - 1))
-
-
-def its_ok():
-    result = True
-    for i in range(1, snake_len):
-        if snake_x[i] == snake_x[0] and snake_y[i] == snake_y[0]:
-            result =  False
-    return result
-
-
-def move_snake(new_x, new_y):
-    global snake_len
-    global run
-    if new_x == apple_x and new_y == apple_y:
-        new_apple()
-        snake_len += 1
-    for i in reversed(range(snake_len)):
-        if i != 0:
-            snake_x[i] = snake_x[i-1]
-            snake_y[i] = snake_y[i - 1]
-        else:
-            snake_x[0] = new_x
-            snake_y[0] = new_y
-
-
 def draw_field():
     for i in range(1, max_width, width):
         pygame.draw.line(win, (255, 255, 255), (i, 1), (i, max_height))
 
 
-def new_apple():
-    in_snake = False
-    global apple_x
-    apple_x = random.randint(0, 24) * 20
-    global apple_y
-    apple_y = random.randint(0, 24) * 20
-    global apple
-    for i in range(snake_len):
-        if apple_x == snake_x[i] and apple_y == snake_y[i]:
-            in_snake = True
-            break
-    if in_snake:
-        new_apple()
-    apple = True
-
-
+objects = Objects()
 while run:
-    if not apple:
-        new_apple()
+    if not objects.apple:
+        objects.new_apple()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT] and not right:
-        left = True
-        right = False
-        up = False
-        down = False
-    if keys[pygame.K_RIGHT] and not left:
-        left = False
-        right = True
-        up = False
-        down = False
-    if keys[pygame.K_UP] and not down:
-        left = False
-        right = False
-        up = True
-        down = False
-    if keys[pygame.K_DOWN] and not up:
-        left = False
-        right = False
-        up = False
-        down = True
-
-    if left:
-        move_snake(snake_x[0] - speed, snake_y[0])
-    if right:
-        move_snake(snake_x[0] + speed, snake_y[0])
-    if up:
-        move_snake(snake_x[0], snake_y[0] - speed)
-    if down:
-        move_snake(snake_x[0], snake_y[0] + speed)
-
+    if keys[pygame.K_LEFT] and not objects.goright:
+        objects.stop()
+        objects.direction("left")
+    if keys[pygame.K_RIGHT] and not objects.goleft:
+        objects.stop()
+        objects.direction("right")
+    if keys[pygame.K_UP] and not objects.godown:
+        objects.stop()
+        objects.direction("up")
+    if keys[pygame.K_DOWN] and not objects.goup:
+        objects.stop()
+        objects.direction("down")
+    objects.move()
     win.fill((0, 0, 0))
-
-    if snake_x[0] in range(0, max_width) and snake_y[0] in range(0, max_height):
-        draw_snake()
+    if objects.snake_x[0] in range(0, max_width) and objects.snake_y[0] in range(0, max_height):
+        objects.draw()
     else:
         run = False
-    if not its_ok():
+    if not objects.its_ok():
         run = False
     pygame.display.update()
     pygame.time.delay(100)
