@@ -45,6 +45,7 @@ class Objects:
         return result
 
     def direction(self, direct):
+        self.stop()
         if direct == "up":
             self.go_up = True
         elif direct == "down":
@@ -160,18 +161,22 @@ def play():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+        if objects.go_down:
+            last_direction = "down"
+        if objects.go_up:
+            last_direction = "up"
+        if objects.go_left:
+            last_direction = "left"
+        if objects.go_right:
+            last_direction = "right"
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT] and not objects.go_right:
-            objects.stop()
+        if keys[pygame.K_LEFT] and last_direction != "right":
             objects.direction("left")
-        if keys[pygame.K_RIGHT] and not objects.go_left:
-            objects.stop()
+        if keys[pygame.K_RIGHT] and last_direction != "left":
             objects.direction("right")
-        if keys[pygame.K_UP] and not objects.go_down:
-            objects.stop()
+        if keys[pygame.K_UP] and last_direction != "down":
             objects.direction("up")
-        if keys[pygame.K_DOWN] and not objects.go_up:
-            objects.stop()
+        if keys[pygame.K_DOWN] and last_direction != "up":
             objects.direction("down")
         objects.move()
         win.fill((0, 0, 0))
