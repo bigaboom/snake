@@ -33,6 +33,7 @@ class Menu:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.active = False
+                    self.menu_active = 1    # Установка флага Exit
             keys = pygame.key.get_pressed()
             if keys[pygame.K_UP] and not keys_last[pygame.K_UP]:
                 if self.menu_active == 0:
