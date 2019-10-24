@@ -6,8 +6,10 @@ from menu import Menu
 
 
 pygame.init()
-max_width = 500
-max_height = 500
+count_x = 50
+count_y = 30
+max_width = count_x * 20
+max_height = count_y * 20
 pygame.display.set_caption("Змейка")
 win = pygame.display.set_mode((max_width, max_height))
 
@@ -21,9 +23,9 @@ def play():
         pygame.display.flip()
         pygame.time.delay(100)
 
-    objects = Objects((0, 0, 255), 40)
+    objects = Objects((0, 0, 255), 40, count_x, count_y)
     control = Controls()
-    apple = Apple()
+    apple = Apple(count_x, count_y)
     while control.run:
         if not apple.apple:
             apple.new_apple(objects, None)
@@ -37,7 +39,7 @@ def play():
             apple.draw(win)
         else:
             control.run = False
-        if not objects.its_ok():
+        if not objects.its_ok(None):
             control.run = False
         pygame.display.update()
         pygame.time.delay(100)
@@ -55,10 +57,10 @@ def two_players():
         pygame.display.flip()
         pygame.time.delay(100)
 
-    object1 = Objects((0, 0, 255), 40)
-    object2 = Objects((0, 255, 0), 120)
+    object1 = Objects((0, 0, 255), 40, count_x, count_y)
+    object2 = Objects((0, 255, 0), 120, count_x, count_y)
     control = Controls()
-    apple = Apple()
+    apple = Apple(count_x, count_y)
     while control.run:
         if not apple.apple:
             apple.new_apple(object1, object2)
@@ -74,9 +76,9 @@ def two_players():
             apple.draw(win)
         else:
             control.run = False
-        if not object1.its_ok():
+        if not object1.its_ok(object2):
             control.run = False
-        if not object2.its_ok():
+        if not object2.its_ok(object1):
             control.run = False
         pygame.display.update()
         pygame.time.delay(100)

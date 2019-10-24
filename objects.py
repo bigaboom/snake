@@ -3,17 +3,19 @@ import random
 
 
 class Apple:
-    def __init__(self):
+    def __init__(self, count_x, count_y):
         self.apple_x = 0
         self.apple_y = 0
         self.apple = False
         self.height = 20
         self.width = 20
+        self.count_x = count_x
+        self.count_y = count_y
 
     def new_apple(self, object1, object2=None):
         in_snake = False
-        self.apple_x = random.randint(0, 24) * 20
-        self.apple_y = random.randint(0, 24) * 20
+        self.apple_x = random.randint(0, self.count_x-1) * 20
+        self.apple_y = random.randint(0, self.count_y-1) * 20
         for i in range(object1.snake_len):
             if self.apple_x == object1.snake_x[i] and self.apple_y == object1.snake_y[i]:
                 in_snake = True
@@ -32,9 +34,9 @@ class Apple:
 
 
 class Objects:
-    def __init__(self, color, start_y):
-        self.snake_x = [0 for i in range(25 * 25)]
-        self.snake_y = [0 for i in range(25 * 25)]
+    def __init__(self, color, start_y, count_x, count_y):
+        self.snake_x = [0 for i in range(count_x * count_y)]
+        self.snake_y = [0 for i in range(count_x * count_y)]
         self.snake_x[0] = 100
         self.snake_y[0] = start_y
         self.snake_x[1] = 80
@@ -57,11 +59,16 @@ class Objects:
         self.go_up = False
         self.go_down = False
 
-    def its_ok(self):
+    def its_ok(self, second):
         result = True
         for i in range(1, self.snake_len):
             if self.snake_x[i] == self.snake_x[0] and self.snake_y[i] == self.snake_y[0]:
                 result = False
+        if second:
+            for i in range(second.snake_len):
+                if self.snake_x[0] == second.snake_x[i] and self.snake_y[0] == second.snake_y[i]:
+                    result = False
+                    break
         return result
 
     def direction(self, direct):
