@@ -8,12 +8,13 @@ class Menu:
         self.menu_start_x = (max_width // 2)
         self.menu_start_y = (max_height // 4)
         self.menu_items = [
-            "New game",
+            "One player",
+            "Two players",
             "Exit"
         ]
-        self.menu_active = 0
 
     def menu(self, window):
+        self.menu_active = 0
         keys_last = pygame.key.get_pressed()
         self.active = True
         while self.active:
@@ -29,11 +30,11 @@ class Menu:
                                         (self.menu_start_x - (len(self.menu_items[i]) // 2) * 12,
                                          self.menu_start_y + i * 25), f"{self.menu_items[i]}", (155, 155, 0))
             pygame.display.flip()
-            pygame.time.delay(100)
+            pygame.time.delay(10)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.active = False
-                    self.menu_active = 1    # Установка флага Exit
+                    self.menu_active = 2    # Установка флага Exit
             keys = pygame.key.get_pressed()
             if keys[pygame.K_UP] and not keys_last[pygame.K_UP]:
                 if self.menu_active == 0:
