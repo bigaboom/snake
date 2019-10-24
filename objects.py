@@ -1,6 +1,7 @@
 import pygame
 import random
 
+
 class Apple:
     def __init__(self):
         self.apple_x = 0
@@ -79,7 +80,6 @@ class Objects:
             x = self.snake_x[i]
             y = self.snake_y[i]
             pygame.draw.rect(window, self.color, (x - 1, y - 1, self.width - 1, self.height - 1))
-
 
     def move(self, apple, object1, object2=None):
         new_x = 0

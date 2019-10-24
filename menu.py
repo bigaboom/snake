@@ -5,6 +5,7 @@ import pygame.freetype
 class Menu:
     def __init__(self, max_width, max_height):
         self.active = True
+        self.menu_active = 0
         self.menu_start_x = (max_width // 2)
         self.menu_start_y = (max_height // 4)
         self.menu_items = [
