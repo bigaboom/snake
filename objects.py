@@ -2,6 +2,17 @@ import pygame
 import random
 
 
+class Blocks:
+    def __init__(self, count_x, count_y):
+        self.blocks = []
+        for x in range(count_x):
+            self.blocks.append([x, 0])
+            self.blocks.append([x, count_y - 1])
+        for y in range(1, count_y - 1):
+            self.blocks.append([0, y])
+            self.blocks.append(count_x - 1, y)
+
+
 class Apple:
     def __init__(self, count_x, count_y):
         self.location = [0, 0]

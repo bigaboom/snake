@@ -6,8 +6,8 @@ from menu import Menu
 
 
 pygame.init()
-count_x = 20
-count_y = 20
+count_x = 60
+count_y = 40
 max_width = count_x * 20
 max_height = count_y * 20
 pygame.display.set_caption("Змейка")
