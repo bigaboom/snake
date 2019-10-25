@@ -1,13 +1,13 @@
 import pygame
 import pygame.freetype
 from controls import Controls
-from objects import Objects, Apple
+from objects import Objects, Apple, Blocks
 from menu import Menu
 
 
 pygame.init()
-count_x = 60
-count_y = 40
+count_x = 40
+count_y = 30
 max_width = count_x * 20
 max_height = count_y * 20
 pygame.display.set_caption("Змейка")
@@ -26,20 +26,22 @@ def play():
     objects = Objects((0, 0, 255), 40)
     control = Controls()
     apple = Apple(count_x, count_y)
+    blocks = Blocks(count_x, count_y)
     delay = 0
     while control.run:
         if not apple.apple:
-            apple.new_apple(objects, None)
+            apple.new_apple(blocks, objects, None)
         control.first_player(objects)
         delay += 1
         if delay >= 10:
             delay = 0
             objects.change_lastr_direction()
-            objects.move(apple, objects)
+            objects.move(blocks, apple, objects)
+            win.fill((0, 0, 0))
+            blocks.draw(win)
             objects.draw(win)
             apple.draw(win)
-            win.fill((0, 0, 0))
-            if objects.snake[0][0] in range(0, max_width) and objects.snake[0][1] in range(0, max_height):
+            if objects.snake[0] not in blocks.blocks:
                 objects.draw(win)
                 apple.draw(win)
             else:
@@ -64,24 +66,25 @@ def two_players():
 
     object1 = Objects((0, 0, 255), 40)
     object2 = Objects((0, 255, 0), 120)
+    blocks = Blocks(count_x, count_y)
     control = Controls()
     apple = Apple(count_x, count_y)
     delay = 0
     while control.run:
         if not apple.apple:
-            apple.new_apple(object1, object2)
+            apple.new_apple(blocks, object1, object2)
         delay += 1
         control.two_players(object1, object2)
         if delay >= 10:
             delay = 0
             object1.change_lastr_direction()
-            object1.move(apple, object1, object2)
+            object1.move(blocks, apple, object1, object2)
             object2.change_lastr_direction()
-            object2.move(apple, object2, object1)
+            object2.move(blocks, apple, object2, object1)
             apple.draw(win)
             win.fill((0, 0, 0))
-            if (object1.snake[0][0] in range(0, max_width) and object1.snake[0][1] in range(0, max_height)) \
-                    and (object2.snake[0][0] in range(0, max_width) and object2.snake[0][1] in range(0, max_height)):
+            if (object1.snake[0] not in blocks.blocks) and (object2.snake[0] not in blocks.blocks):
+                blocks.draw(win)
                 object1.draw(win)
                 object2.draw(win)
                 apple.draw(win)

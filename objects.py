@@ -5,12 +5,19 @@ import random
 class Blocks:
     def __init__(self, count_x, count_y):
         self.blocks = []
+        self.width = 20
+        self.height = 20
         for x in range(count_x):
-            self.blocks.append([x, 0])
-            self.blocks.append([x, count_y - 1])
+            self.blocks.append([x * 20, 0])
+            self.blocks.append([x * 20, (count_y - 1) * 20])
         for y in range(1, count_y - 1):
-            self.blocks.append([0, y])
-            self.blocks.append(count_x - 1, y)
+            self.blocks.append([0, y * 20])
+            self.blocks.append([(count_x - 1) * 20, y * 20])
+
+    def draw(self, window):
+        for block in self.blocks:
+            pygame.draw.rect(window, (80, 80, 80),
+                             (block[0] + 1, block[1] + 1, self.width - 1, self.height - 1))
 
 
 class Apple:
@@ -22,19 +29,22 @@ class Apple:
         self.count_x = count_x
         self.count_y = count_y
 
-    def new_apple(self, object1, object2=None):
-        in_snake = False
+    def new_apple(self, blocks, object1, object2=None):
+        bad = False
         self.location = [random.randint(0, self.count_x-1) * 20, random.randint(0, self.count_y-1) * 20]
+        if self.location in blocks.blocks:
+            bad = True
         if self.location in object1.snake:
-            in_snake = True
+            bad = True
         if object2 and self.location in object2.snake:
-            in_snake = True
-        if in_snake:
-            self.new_apple(object1, object2)
+            bad = True
+        if bad:
+            self.new_apple(blocks, object1, object2)
         self.apple = True
 
     def draw(self, window):
-        pygame.draw.rect(window, (255, 0, 0), (self.location[0] - 1, self.location[1] - 1, self.width - 1, self.height - 1))
+        pygame.draw.rect(window, (255, 0, 0),
+                         (self.location[0] + 1, self.location[1] + 1, self.width - 1, self.height - 1))
 
 
 class Objects:
@@ -87,9 +97,9 @@ class Objects:
 
     def draw(self, window):
         for section in self.snake:
-            pygame.draw.rect(window, self.color, (section[0] - 1, section[1] - 1, self.width - 1, self.height - 1))
+            pygame.draw.rect(window, self.color, (section[0] + 1, section[1] + 1, self.width - 1, self.height - 1))
 
-    def move(self, apple, object1, object2=None):
+    def move(self, blocks, apple, object1, object2=None):
         head_location = [0, 0]
         if self.go_right:
             head_location = [self.snake[0][0] + self.step, self.snake[0][1]]
@@ -101,9 +111,7 @@ class Objects:
             head_location = [self.snake[0][0], self.snake[0][1] + self.step]
         if head_location == apple.location:
             self.snake.insert(0, head_location)
-            apple.new_apple(object1, object2)
+            apple.new_apple(blocks, object1, object2)
         else:
             self.snake.insert(0, head_location)
             self.snake.remove(self.snake[len(self.snake) - 1])
-
-
